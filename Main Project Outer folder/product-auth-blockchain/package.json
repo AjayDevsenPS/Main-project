@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.15",
     "qrcode-generator": "^1.4.4",
     "web3": "^4.16.0"
   }

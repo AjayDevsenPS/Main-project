@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Authentication</title>
+  <title>Product Authentication with QR Code</title>
   <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
@@ -16,6 +16,7 @@
     <input id="productName" placeholder="Product Name">
     <input id="manufacturer" placeholder="Manufacturer Name">
     <button id="registerProduct">Register Product</button>
+    <div id="qrCode"></div> <!-- Placeholder for QR Code -->
   </div>
   <div>
     <h2>Verify Product</h2>
@@ -25,8 +26,7 @@
   </div>
   <script>
     // Replace with your contract's ABI and address
-    const productAuthABI = [
-    [
+    const productAuthABI =  [
     {
       "anonymous": false,
       "inputs": [
@@ -227,14 +227,14 @@
       "type": "function",
       "constant": true
     }
-  ]
-    ];
+  ];
     const contractAddress = "0xf960A65Ae5C4474e44127B02FCB71694088127EE"; // Replace with your deployed contract address
 
     // Initialize variables
     const connectWalletButton = document.getElementById('connectWallet');
     const registerProductButton = document.getElementById('registerProduct');
     const verifyProductButton = document.getElementById('verifyProduct');
+    const qrCodeContainer = document.getElementById('qrCode');
     let contract;
     let account;
 
@@ -244,8 +244,8 @@
         try {
           const web3 = new Web3(window.ethereum);
           await window.ethereum.request({ method: 'eth_requestAccounts' });
-          account = (await web3.eth.getAccounts())[0]; // Fetch connected account
-          contract = new web3.eth.Contract(productAuthABI, contractAddress); // Initialize contract
+          account = (await web3.eth.getAccounts())[0];
+          contract = new web3.eth.Contract(productAuthABI, contractAddress);
           alert(`Connected to MetaMask with account: ${account}`);
         } catch (error) {
           console.error("Error connecting to MetaMask:", error);
@@ -271,7 +271,16 @@
         await contract.methods
           .registerProduct(productId, productName, manufacturer)
           .send({ from: account });
-        alert("Product registered successfully!");
+
+        // Generate and display the QR code
+        const productURL = `https://example.com/verify?productId=${productId}`; // Replace with your product verification URL
+        qrCodeContainer.innerHTML = ""; // Clear previous QR code
+        QRCode.toCanvas(document.createElement('canvas'), productURL, { width: 200 }, (err, canvas) => {
+          if (err) console.error("QR Code generation failed:", err);
+          else qrCodeContainer.appendChild(canvas); // Append the QR code canvas to the container
+        });
+
+        alert("Product registered successfully! QR Code generated.");
       } catch (error) {
         console.error("Error registering product:", error);
         alert("Failed to register product. Check the console for details.");
@@ -289,10 +298,10 @@
 
       try {
         const result = await contract.methods.verifyProduct(productId).call();
-        document.getElementById('verificationResult').innerText =
-          result[0]
-            ? `Product is authentic! Name: ${result[1]}, Owner: ${result[2]}`
-            : "Product not found.";
+        const verificationMessage = result[0]
+          ? `Product is authentic!\nName: ${result[1]}\nOwner: ${result[2]}`
+          : "Product not found.";
+        document.getElementById('verificationResult').innerText = verificationMessage;
       } catch (error) {
         console.error("Error verifying product:", error);
         alert("Failed to verify product. Check the console for details.");
