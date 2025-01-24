@@ -1,0 +1,48 @@
+
+
+
+Compiling your contracts...
+===========================
+✓ Fetching solc version list from solc-bin. Attempt #1
+✓ Downloading compiler. Attempt #1.
+> Compiling .\contracts\ProductAuth.sol
+> Artifacts written to C:\Users\asus\OneDrive\Desktop\Main project\product-auth-blockchain\build\contracts
+> Compiled successfully using:
+   - solc: 0.8.0+commit.c7dfd78e.Emscripten.clang
+
+
+Starting migrations...
+======================
+> Network name:    'development'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'ProductAuth'
+   -----------------------
+   > transaction hash:    0xd6c47f0bcea8d4bfcdc9253083c772aa1232ef5f224e19bc871a727767b0fa99
+   > Blocks: 0            Seconds: 0
+   > contract address:    0xf960A65Ae5C4474e44127B02FCB71694088127EE
+   > block number:        1
+   > block timestamp:     1737617075
+   > account:             0x0f62b3980274F63bCaE29a577Dd15393fc723e11
+   > balance:             99.996479216875
+   > gas used:            1043195 (0xfeafb)
+   > gas price:           3.375 gwei
+   > value sent:          0 ETH
+   > total cost:          0.003520783125 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:      0.003520783125 ETH
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.003520783125 ETH
+
+
+PS C:\Users\asus\OneDrive\Desktop\Main project\product-auth-blockchain> 

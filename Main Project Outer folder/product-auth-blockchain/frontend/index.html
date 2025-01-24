@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Authentication</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>Product Authentication</h1>
+  <button id="connectWallet">Connect MetaMask</button>
+  <div>
+    <h2>Register Product</h2>
+    <input id="productId" placeholder="Product ID">
+    <input id="productName" placeholder="Product Name">
+    <input id="manufacturer" placeholder="Manufacturer Name">
+    <button id="registerProduct">Register Product</button>
+  </div>
+  <div>
+    <h2>Verify Product</h2>
+    <input id="verifyProductId" placeholder="Product ID">
+    <button id="verifyProduct">Verify</button>
+    <p id="verificationResult"></p>
+  </div>
+  <script>
+    // Replace with your contract's ABI and address
+    const productAuthABI = [
+    [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "productId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "productId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "productName",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "manufacturer",
+          "type": "address"
+        }
+      ],
+      "name": "ProductRegistered",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownershipHistory",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "products",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "productId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "manufacturer",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "currentOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "isAuthentic",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_productId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_productName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_manufacturer",
+          "type": "string"
+        }
+      ],
+      "name": "registerProduct",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_productId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_productId",
+          "type": "uint256"
+        }
+      ],
+      "name": "verifyProduct",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_productId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOwnershipHistory",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    }
+  ]
+    ];
+    const contractAddress = "0xf960A65Ae5C4474e44127B02FCB71694088127EE"; // Replace with your deployed contract address
+
+    // Initialize variables
+    const connectWalletButton = document.getElementById('connectWallet');
+    const registerProductButton = document.getElementById('registerProduct');
+    const verifyProductButton = document.getElementById('verifyProduct');
+    let contract;
+    let account;
+
+    // Function to connect to MetaMask
+    async function connectMetaMask() {
+      if (window.ethereum) {
+        try {
+          const web3 = new Web3(window.ethereum);
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          account = (await web3.eth.getAccounts())[0]; // Fetch connected account
+          contract = new web3.eth.Contract(productAuthABI, contractAddress); // Initialize contract
+          alert(`Connected to MetaMask with account: ${account}`);
+        } catch (error) {
+          console.error("Error connecting to MetaMask:", error);
+          alert("Failed to connect to MetaMask. Please try again.");
+        }
+      } else {
+        alert("MetaMask not found! Please install it.");
+      }
+    }
+
+    // Function to register a product
+    async function registerProduct() {
+      const productId = document.getElementById('productId').value;
+      const productName = document.getElementById('productName').value;
+      const manufacturer = document.getElementById('manufacturer').value;
+
+      if (!productId || !productName || !manufacturer) {
+        alert("Please fill in all fields before registering the product.");
+        return;
+      }
+
+      try {
+        await contract.methods
+          .registerProduct(productId, productName, manufacturer)
+          .send({ from: account });
+        alert("Product registered successfully!");
+      } catch (error) {
+        console.error("Error registering product:", error);
+        alert("Failed to register product. Check the console for details.");
+      }
+    }
+
+    // Function to verify a product
+    async function verifyProduct() {
+      const productId = document.getElementById('verifyProductId').value;
+
+      if (!productId) {
+        alert("Please enter a Product ID to verify.");
+        return;
+      }
+
+      try {
+        const result = await contract.methods.verifyProduct(productId).call();
+        document.getElementById('verificationResult').innerText =
+          result[0]
+            ? `Product is authentic! Name: ${result[1]}, Owner: ${result[2]}`
+            : "Product not found.";
+      } catch (error) {
+        console.error("Error verifying product:", error);
+        alert("Failed to verify product. Check the console for details.");
+      }
+    }
+
+    // Event listeners
+    connectWalletButton.addEventListener('click', connectMetaMask);
+    registerProductButton.addEventListener('click', registerProduct);
+    verifyProductButton.addEventListener('click', verifyProduct);
+  </script>
+</body>
+</html>

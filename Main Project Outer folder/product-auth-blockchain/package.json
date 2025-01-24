@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "qrcode-generator": "^1.4.4",
+    "web3": "^4.16.0"
+  }
+}
