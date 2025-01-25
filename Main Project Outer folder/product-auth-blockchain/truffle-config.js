@@ -1,7 +1,7 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 const mnemonic = "picnic find inject wonder blind grief beef animal crumble rate lunch dog"; // Replace with your MetaMask seed phrase
-const infuraUrl = "https://sepolia.infura.io/v3/ff71eeb28f464be7be89e6583d70bfc3"; // Replace with your Infura project ID
+const infuraUrl = "https://eth-sepolia.g.alchemy.com/v2/lczrtjajxvhgeiPm_l7gmkct941wJD6Q"; // Replace with your Infura project ID
 
 module.exports = {
   networks: {
