@@ -67,7 +67,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -106,7 +107,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -176,7 +178,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -195,7 +198,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"productId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"productId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"productName\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"manufacturer\",\"type\":\"address\"}],\"name\":\"ProductRegistered\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_productId\",\"type\":\"uint256\"}],\"name\":\"getOwnershipHistory\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"ownershipHistory\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"products\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"productId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"productName\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"manufacturer\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"currentOwner\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"isAuthentic\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_productId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_productName\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_manufacturer\",\"type\":\"string\"}],\"name\":\"registerProduct\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_productId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_productId\",\"type\":\"uint256\"}],\"name\":\"verifyProduct\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/ProductAuth.sol\":\"ProductAuth\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/ProductAuth.sol\":{\"keccak256\":\"0x47c623d158710c13ddadc06d555eb811c0b4cda0d85e1584fa674449d4ae009a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://1759f89dbf9e84bfc6e318b9bc5d539090e97b8612be20034a26a884f2606e39\",\"dweb:/ipfs/QmbYxNAytyLkd6KWNQVPAz1sgcCSmrxS4E6UjfLa9vY6o4\"]}},\"version\":1}",
@@ -9585,9 +9589,23 @@
     "name": "solc",
     "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x6F049B8B880aB034e50A29D6363815ED212cBE5F",
+      "transactionHash": "0x881ac48a0dff77fcdae070a5d890fb406d9e1677ed01ffaeb7c2e9da02e0e281"
+    },
+    "11155111": {
+      "events": {},
+      "links": {},
+      "address": "0x590d0e9fe267763383ee12Ac15C1bf7B6d6C1fE4",
+      "transactionHash": "0x64580d980480a3a9c2e01c6463a763f0b5760de7ac57854474929c13f68231f0"
+    }
+  },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-01-25T07:06:41.694Z",
+  "updatedAt": "2025-01-28T18:21:47.387Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
