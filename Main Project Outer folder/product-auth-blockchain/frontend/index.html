@@ -6,6 +6,7 @@
     <title>QR-Based Blockchain Product Authentication</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -17,6 +18,9 @@
         <input type="text" id="productName" placeholder="Product Name">
         <input type="text" id="manufacturer" placeholder="Manufacturer">
         <button onclick="addProduct()">Add Product</button>
+
+        <h3>QR Code</h3>
+        <div id="qrcode"></div>
 
         <h2>Verify Product</h2>
         <input type="number" id="verifyProductId" placeholder="Product ID">
