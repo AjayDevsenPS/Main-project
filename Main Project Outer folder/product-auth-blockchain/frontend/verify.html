@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR-Based Blockchain Product Authentication</title>
+    <title>Verify Product</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5/web3.min.js"></script>
 </head>
@@ -17,8 +17,10 @@
     </nav>
 
     <div class="container">
-        <h1>Welcome to QR-Based Blockchain Authentication</h1>
-        <button onclick="connectWallet()">Connect Wallet</button>
+        <h1>Verify Product</h1>
+        <input type="number" id="verifyProductId" placeholder="Product ID">
+        <button onclick="verifyProduct()">Verify</button>
+        <p id="productDetails"></p>
     </div>
 
     <script src="app.js"></script>

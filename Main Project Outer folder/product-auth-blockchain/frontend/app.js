@@ -1,6 +1,6 @@
 let contract;
 let account;
-const contractAddress = "0x6F049B8B880aB034e50A29D6363815ED212cBE5F"; // Replace with deployed address
+const contractAddress = "0x6F049B8B880aB034e50A29D6363815ED212cBE5F"; // Replace with your deployed contract address
 
 const checkWalletConnection = () => {
     if (!account) {
@@ -223,6 +223,8 @@ async function connectWallet() {
         ];
 
         contract = new web3.eth.Contract(contractABI, contractAddress);
+        console.log("Wallet Connected:", account);
+
         alert("Wallet Connected: " + account);
     } catch (error) {
         console.error(error);
@@ -230,22 +232,39 @@ async function connectWallet() {
     }
 }
 
-async function addProduct() {
-    try {
-        if (!checkWalletConnection()) return;
-        
-        const productId = parseInt(document.getElementById("productId").value);
-        const productName = document.getElementById("productName").value;
-        const manufacturer = document.getElementById("manufacturer").value;
-
-        if (!productId || !productName || !manufacturer) {
-            alert("Please fill all fields");
-            return;
+// Auto-connect wallet on page load
+window.addEventListener("load", async () => {
+    if (window.ethereum) {
+        try {
+            await connectWallet();
+        } catch (error) {
+            console.warn("Wallet connection failed:", error.message);
         }
+    }
+});
 
+async function addProduct() {
+    if (!checkWalletConnection()) return;
+
+    const productIdInput = document.getElementById("productId");
+    const productNameInput = document.getElementById("productName");
+    const manufacturerInput = document.getElementById("manufacturer");
+
+    if (!productIdInput || !productNameInput || !manufacturerInput) return;
+
+    const productId = parseInt(productIdInput.value);
+    const productName = productNameInput.value;
+    const manufacturer = manufacturerInput.value;
+
+    if (!productId || !productName || !manufacturer) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    try {
         await contract.methods.registerProduct(productId, productName, manufacturer)
             .send({ from: account });
-        
+
         alert("Product Registered Successfully!");
         generateQRCode(productId);
     } catch (error) {
@@ -255,9 +274,13 @@ async function addProduct() {
 }
 
 function generateQRCode(productId) {
-    document.getElementById("qrcode").innerHTML = "";
+    const qrCodeDiv = document.getElementById("qrcode");
+    if (!qrCodeDiv) return;
+
+    qrCodeDiv.innerHTML = "";
     const verificationUrl = `${window.location.origin}/verify.html?productId=${productId}`;
-    new QRCode(document.getElementById("qrcode"), {
+    
+    new QRCode(qrCodeDiv, {
         text: verificationUrl,
         width: 128,
         height: 128
@@ -265,27 +288,42 @@ function generateQRCode(productId) {
 }
 
 async function verifyProduct() {
+    if (!checkWalletConnection()) return;
+
+    const verifyProductIdInput = document.getElementById("verifyProductId");
+    const productDetailsDiv = document.getElementById("productDetails");
+
+    if (!productDetailsDiv) return;
+
+    // Get productId from URL if scanned
+    const urlParams = new URLSearchParams(window.location.search);
+    const scannedProductId = urlParams.get("productId");
+    
+    const productId = scannedProductId || (verifyProductIdInput ? parseInt(verifyProductIdInput.value) : null);
+
+    if (!productId) {
+        alert("Please enter or scan a Product ID.");
+        return;
+    }
+
     try {
-        if (!checkWalletConnection()) return;
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const scannedProductId = urlParams.get("productId");
-        const productId = scannedProductId || parseInt(document.getElementById("verifyProductId").value);
-        
-        if (!productId) {
-            alert("Please enter or scan a Product ID");
-            return;
-        }
-        
         const result = await contract.methods.verifyProduct(productId).call();
         
-        document.getElementById("productDetails").innerHTML = 
-            `Product Name: ${result[1]}<br>
-             Current Owner: ${result[2]}<br>
-             Authentic: ${result[0] ? '✅ Yes' : '❌ No'}`;
+        productDetailsDiv.innerHTML = `
+            <strong>Product Name:</strong> ${result[1]}<br>
+            <strong>Current Owner:</strong> ${result[2]}<br>
+            <strong>Authentic:</strong> ${result[0] ? '✅ Yes' : '❌ No'}
+        `;
     } catch (error) {
         console.error(error);
-        document.getElementById("productDetails").innerText = "Product not found or error in verification";
+        productDetailsDiv.innerText = "Product not found or error in verification.";
         alert("Verification Error: " + error.message);
     }
 }
+
+// Auto-run verifyProduct if on the verify.html page with a scanned QR code
+window.addEventListener("load", () => {
+    if (window.location.pathname.includes("verify.html")) {
+        verifyProduct();
+    }
+});
