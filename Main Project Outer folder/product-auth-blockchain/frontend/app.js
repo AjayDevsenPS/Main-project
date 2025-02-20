@@ -273,18 +273,34 @@ async function addProduct() {
     }
 }
 
-function generateQRCode(productId) {
+async function generateQRCode(productId, productName, manufacturer) {
     const qrCodeDiv = document.getElementById("qrcode");
     if (!qrCodeDiv) return;
 
-    qrCodeDiv.innerHTML = "";
-    const verificationUrl = `${window.location.origin}/verify.html?productId=${productId}`;
-    
-    new QRCode(qrCodeDiv, {
-        text: verificationUrl,
-        width: 128,
-        height: 128
-    });
+    try {
+        const result = await contract.methods.verifyProduct(productId).call();
+        const authenticity = result[0] ? "Yes" : "No";
+        const owner = result[2];
+
+        const qrData = JSON.stringify({
+            productId,
+            productName,
+            manufacturer,
+            authenticity,
+            owner,
+            contractAddress
+        });
+
+        qrCodeDiv.innerHTML = "";
+        new QRCode(qrCodeDiv, {
+            text: qrData,
+            width: 128,
+            height: 128
+        });
+    } catch (error) {
+        console.error("QR Code Generation Error:", error);
+        alert("Failed to generate QR Code: " + error.message);
+    }
 }
 
 async function verifyProduct() {
@@ -292,14 +308,18 @@ async function verifyProduct() {
 
     const verifyProductIdInput = document.getElementById("verifyProductId");
     const productDetailsDiv = document.getElementById("productDetails");
-
     if (!productDetailsDiv) return;
 
-    // Get productId from URL if scanned
     const urlParams = new URLSearchParams(window.location.search);
-    const scannedProductId = urlParams.get("productId");
-    
-    const productId = scannedProductId || (verifyProductIdInput ? parseInt(verifyProductIdInput.value) : null);
+    const scannedData = urlParams.get("productData");
+
+    let productId;
+    if (scannedData) {
+        const parsedData = JSON.parse(decodeURIComponent(scannedData));
+        productId = parsedData.productId;
+    } else {
+        productId = verifyProductIdInput ? parseInt(verifyProductIdInput.value) : null;
+    }
 
     if (!productId) {
         alert("Please enter or scan a Product ID.");
@@ -308,7 +328,6 @@ async function verifyProduct() {
 
     try {
         const result = await contract.methods.verifyProduct(productId).call();
-        
         productDetailsDiv.innerHTML = `
             <strong>Product Name:</strong> ${result[1]}<br>
             <strong>Current Owner:</strong> ${result[2]}<br>
