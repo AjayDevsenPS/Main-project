@@ -1,0 +1,37 @@
+async function generateQRCode(productId, productName, manufacturer) {
+  const qrCodeDiv = document.getElementById("qrcode");
+  if (!qrCodeDiv) return;
+
+  try {
+      const result = await contract.methods.verifyProduct(productId).call();
+      const authenticity = result[0] ? "Yes" : "No";
+      const owner = result[2];
+
+      // Generate MetaMask deep link and Etherscan link for the transaction
+      const etherscanLink = `https://etherscan.io/address/${contractAddress}`;
+      const metamaskLink = `https://metamask.app.link/dapp/etherscan.io/tx/${contractAddress}`;
+      const blockExplorerLink = `https://etherscan.io/tx/${contractAddress}`;
+
+      const qrData = JSON.stringify({
+          productId,
+          productName,
+          manufacturer,
+          authenticity,
+          owner,
+          contractAddress,
+          metamaskLink,
+          etherscanLink,
+          blockExplorerLink
+      });
+
+      qrCodeDiv.innerHTML = "";
+      new QRCode(qrCodeDiv, {
+          text: blockExplorerLink,
+          width: 128,
+          height: 128
+      });
+  } catch (error) {
+      console.error("QR Code Generation Error:", error);
+      alert("Failed to generate QR Code: " + error.message);
+  }
+}
