@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create QR Code</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="add.html">Add Product</a></li>
+            <li><a href="verify.html">Verify Product</a></li>
+            <li><a href="create_qr.html">Create QR Code</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Create QR Code</h1>
+        <label for="qrProductId">Enter Product ID:</label>
+        <input type="number" id="qrProductId" placeholder="Product ID">
+        <button onclick="generateProductQRCode()">Generate QR Code</button>
+
+        <div id="qrCodeContainer">
+            <h3>QR Code:</h3>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
